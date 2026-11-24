@@ -1,0 +1,55 @@
+name: Publicar sitio estático en GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Obtener el repositorio
+        uses: actions/checkout@v4
+
+      - name: Preparar archivos públicos
+        run: |
+          mkdir -p _site/public/css _site/public/js _site/public/images
+          cp index.html _site/index.html
+          cp public/favicon.ico _site/public/favicon.ico
+          cp public/css/site.css _site/public/css/site.css
+          cp public/js/site.js _site/public/js/site.js
+          cp public/js/pages.js _site/public/js/pages.js
+          cp public/images/hero-chevrolet.webp _site/public/images/hero-chevrolet.webp
+          cp public/images/onix.jpg _site/public/images/onix.jpg
+          cp public/images/tracker.jpg _site/public/images/tracker.jpg
+          cp public/images/montana.png _site/public/images/montana.png
+          touch _site/.nojekyll
+
+      - name: Configurar GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Subir artefacto del sitio
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Publicar en GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

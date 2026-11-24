@@ -107,6 +107,30 @@ Guarde una copia de seguridad de la base de datos y de `storage/app/public` ante
 - **Un vehículo no aparece en Inicio:** debe estar publicado y marcado como destacado.
 - **Cambios no visibles:** en producción ejecute `php artisan view:cache`.
 
+## 7. Publicar la versión estática en GitHub Pages
+
+El archivo `index.html` de la raíz contiene una versión estática de una sola página con Inicio, Nosotros, Vehículos, Promociones y Contacto. Usa rutas relativas, por lo que funciona tanto en un dominio como en la dirección de proyecto `https://usuario.github.io/chevrolet/`.
+
+GitHub Pages no ejecuta PHP ni Laravel. Por eso, en esta versión:
+
+- El panel de administración no está disponible.
+- Los mensajes no se guardan en una base de datos.
+- El formulario prepara un correo en la aplicación del visitante. Para activarlo, reemplace `data-contact-email=""` en `index.html` por el correo real, por ejemplo `data-contact-email="contacto@sudominio.com"`.
+- Los vehículos, promociones, textos e imágenes se cambian editando `index.html` y los archivos de `public/`.
+
+### Publicación automática
+
+1. Confirme el correo de contacto en `index.html` y sustituya los contenidos de ejemplo.
+2. Revise que las fotografías tengan autorización para publicación.
+3. Suba los cambios a la rama `main` del repositorio de GitHub.
+4. En GitHub, abra **Settings → Pages** y seleccione **GitHub Actions** como fuente.
+5. Ejecute el workflow **Publicar sitio estático en GitHub Pages** o espere a que se ejecute al subir cambios a `main`.
+6. Cuando termine, GitHub mostrará la dirección pública en **Settings → Pages** y en la pestaña **Actions**.
+
+El workflow `.github/workflows/github-pages.yml` copia únicamente `index.html`, el favicon, CSS, JavaScript y las cuatro imágenes utilizadas. No publica `.env`, la base de datos, `vendor`, `storage` ni el código administrativo.
+
+Para actualizar el sitio, edite los archivos, confirme los cambios y súbalos a `main`. El workflow volverá a publicar automáticamente. Esta versión estática es independiente del panel Laravel; los cambios realizados en uno no se reflejan automáticamente en el otro.
+
 ---
 
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
